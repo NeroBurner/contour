@@ -148,7 +148,7 @@ std::string Line<Cell>::toUtf8Trimmed() const
 }
 
 template <typename Cell>
-InflatedLineBuffer<Cell> inflate(TrivialLineBuffer const& input)
+InflatedLineBuffer<Cell> inflate(TrivialLineBuffer const& input, bool conformToUnicodeCore)
 {
     static constexpr char32_t ReplacementCharacter { 0xFFFD };
 
@@ -182,7 +182,7 @@ InflatedLineBuffer<Cell> inflate(TrivialLineBuffer const& input)
             columns.emplace_back(Cell {});
             columns.back().setHyperlink(input.hyperlink);
             columns.back().write(input.textAttributes, nextChar, static_cast<uint8_t>(charWidth));
-            gapPending = charWidth - 1;
+            gapPending = !conformToUnicodeCore ? 0 : charWidth - 1;
         }
         else
         {

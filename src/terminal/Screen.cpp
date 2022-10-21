@@ -446,7 +446,8 @@ void Screen<Cell>::writeTextInternal(char32_t _char)
     }
     else
     {
-        auto const extendedWidth = usePreviousCell().appendCharacter(codepoint);
+        auto const allowWidthChange = _terminal.isModeEnabled(DECMode::Unicode);
+        auto const extendedWidth = usePreviousCell().appendCharacter(codepoint, allowWidthChange);
         if (extendedWidth > 0)
             clearAndAdvance(extendedWidth);
         _terminal.markCellDirty(_state.lastCursorPosition);
@@ -475,7 +476,8 @@ void Screen<Cell>::writeCharToCurrentAndAdvance(char32_t _character) noexcept
 
     _state.lastCursorPosition = _state.cursor.position;
 
-    clearAndAdvance(cell.width();
+    auto const conformToUnicodeCore = _terminal.isModeEnabled(DECMode::Unicode);
+    clearAndAdvance(!conformToUnicodeCore ? 1 : cell.width());
 
     // TODO: maybe move selector API up? So we can make this call conditional,
     //       and only call it when something is selected?

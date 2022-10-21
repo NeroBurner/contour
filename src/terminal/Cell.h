@@ -173,7 +173,7 @@ class CONTOUR_PACKED Cell
 
     void setCharacter(char32_t _codepoint) noexcept;
     void setCharacter(char32_t _codepoint, uint8_t _width) noexcept;
-    [[nodiscard]] int appendCharacter(char32_t _codepoint) noexcept;
+    [[nodiscard]] int appendCharacter(char32_t _codepoint, bool allowWidthChange = false) noexcept;
     [[nodiscard]] std::string toUtf8() const;
 
     [[nodiscard]] HyperlinkId hyperlink() const noexcept;
@@ -384,7 +384,7 @@ inline void Cell::setCharacter(char32_t _codepoint) noexcept
         setWidth(1);
 }
 
-inline int Cell::appendCharacter(char32_t _codepoint) noexcept
+inline int Cell::appendCharacter(char32_t _codepoint, bool allowWidthChange) noexcept
 {
     assert(_codepoint != 0);
 
@@ -393,9 +393,7 @@ inline int Cell::appendCharacter(char32_t _codepoint) noexcept
     {
         ext.codepoints.push_back(_codepoint);
 
-        constexpr bool AllowWidthChange = false; // TODO: make configurable
-
-        auto const w = [&]() {
+        auto const newWidth = [&]() {
             switch (_codepoint)
             {
                 case 0xFE0E: return 1;
@@ -404,10 +402,10 @@ inline int Cell::appendCharacter(char32_t _codepoint) noexcept
             }
         }();
 
-        if (w != width() && AllowWidthChange)
+        if (newWidth > width() && allowWidthChange)
         {
-            int const diff = w - width();
-            setWidth(static_cast<uint8_t>(w));
+            int const diff = newWidth - width();
+            setWidth(static_cast<uint8_t>(newWidth));
             return diff;
         }
     }

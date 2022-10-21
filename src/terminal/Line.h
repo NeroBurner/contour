@@ -78,7 +78,7 @@ using InflatedLineBuffer = std::vector<Cell>;
 
 /// Unpacks a TrivialLineBuffer into an InflatedLineBuffer<Cell>.
 template <typename Cell>
-InflatedLineBuffer<Cell> inflate(TrivialLineBuffer const& input);
+InflatedLineBuffer<Cell> inflate(TrivialLineBuffer const& input, bool conformToUnicodeCore = false);
 
 template <typename Cell>
 using LineStorage = std::variant<TrivialLineBuffer, InflatedLineBuffer<Cell>>;

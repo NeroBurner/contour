@@ -146,7 +146,7 @@ Terminal::Terminal(unique_ptr<Pty> _pty,
     hardReset();
 #else
     setMode(DECMode::AutoWrap, true);
-    setMode(DECMode::Unicode, true);
+    setMode(DECMode::Unicode, false);
     setMode(DECMode::TextReflow, true);
     setMode(DECMode::SixelCursorNextToGraphic, state_.sixelCursorConformance);
 #endif
@@ -1531,7 +1531,7 @@ void Terminal::hardReset()
 
     state_.modes = Modes {};
     setMode(DECMode::AutoWrap, true);
-    setMode(DECMode::Unicode, true);
+    setMode(DECMode::Unicode, false);
     setMode(DECMode::TextReflow, state_.allowReflowOnResize);
     setMode(DECMode::SixelCursorNextToGraphic, state_.sixelCursorConformance);
 
